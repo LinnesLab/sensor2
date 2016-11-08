@@ -33,11 +33,15 @@ void setup() {
 void loop() {
   
   Serial.println("===================");
-  float UV = uv.readUV();
-  float IR = uv.readIR();
+  uint32_t UV = uv.readUV();
+//  float IR = uv.readIR();
 
-  Serial.print("FULL-IR: ");  Serial.println(IR);
-  Serial.print("UV: ");  Serial.println(UV);
+//  Serial.print("FULL-IR: ");  Serial.println(IR,BIN);
+  Serial.print("UV: ");  Serial.println(UV,BIN);
+Serial.print("UV: ");  Serial.println(UV);
+  Serial.print("UVI: ");  Serial.println(0.0082*(0.00391*UV*UV+UV));
+  uv.printOut();
+  
 
   delay(1000);
 }

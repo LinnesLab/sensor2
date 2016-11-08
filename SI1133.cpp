@@ -1,4 +1,18 @@
 #include "SI1133.h"
+//
+// General steps:
+//
+// 1. Initialize the Si115x
+//
+// 2. Initiate a conversion by using si115x_force()
+//
+// 3. The interrupt causes the interrupt handler to fill the
+//    SI115X_SAMPLES structure
+//
+// 4. The example_calling_routine picks up data from the
+//    SI115X_SAMPLES structure and calls the get_uv()
+//    routine to compute the uvi
+//
 
 SI1133::SI1133() {
   _addr = SI1133_ADDR;
@@ -9,33 +23,40 @@ boolean SI1133::begin(void) {
  
   uint8_t id = read8(SI1133_REG_PARTID);
   if (id != 0x33) return false; // mira si es si1133
-  
   reset();
-  writeParam(SI1133_PARAM_MEASRATEH,0);
-  writeParam(SI1133_PARAM_MEASRATEL,1);
-  writeParam(SI1133_PARAM_MEASCOUNT0,5);
-  writeParam(SI1133_PARAM_MEASCOUNT1,10);
+
+
+    // writeParam(SI1133_PARAM_MEASRATEH,0);
+    // writeParam(SI1133_PARAM_MEASRATEL,1);
+    // writeParam(SI1133_PARAM_MEASCOUNT0,5);
+    // writeParam(SI1133_PARAM_MEASCOUNT1,10);
   //seleccionamos los canales 0(16bits) y 1(24bits)
   //por lo que los resultados estaran en
   //HOTSOUT[0-1]------> canal 0 , 2 registros por la resolucion de 16bits
   //HOTSOUT[2-4]------> canal 1
-  writeParam(SI1133_PARAM_CHLIST,(uint8_t)0X03);
+  writeParam(SI1133_PARAM_CHLIST,(uint8_t)0X01);
   //=======================================================
   //configuraciones para el canal 0
   //seleccionamos el rate y el photodiodo
-  writeParam(SI1133_PARAM_ADCCONFIG0,RATE_NORMAL| F_UV );
+  // writeParam(SI1133_PARAM_ADCCONFIG0,RATE_NORMAL| F_UV );
+    writeParam(SI1133_PARAM_ADCCONFIG0,RATE_NORMAL| 0x78 );
 
-  writeParam(SI1133_PARAM_ADCSENS0,0);
+
+  writeParam(SI1133_PARAM_ADCSENS0,0x09);
   //resolucion de los datos
-  writeParam(SI1133_PARAM_ADCPSOT0,BITS_16);
-  writeParam(SI1133_PARAM_MEASCONFIG0,COUNT0);
-  //=======================================================
-  writeParam(SI1133_PARAM_ADCCONFIG1,RATE_NORMAL| F_LARGE_IR );
-  writeParam(SI1133_PARAM_ADCSENS1,0);
-  writeParam(SI1133_PARAM_ADCPSOT1,BITS_24);
-  writeParam(SI1133_PARAM_MEASCONFIG1,COUNT1);
+  writeParam(SI1133_PARAM_ADCPSOT0,0x40);
+  write8(SI1133_REG_IRQ_ENABLE, 0x01);
+  // writeParam(SI1133_PARAM_MEASCONFIG0,COUNT0);
+  // //=======================================================
+  // writeParam(SI1133_PARAM_ADCCONFIG1,RATE_NORMAL| F_LARGE_IR );
+  // writeParam(SI1133_PARAM_ADCSENS1,0);
+  // writeParam(SI1133_PARAM_ADCPSOT1,BITS_24);
+  // writeParam(SI1133_PARAM_MEASCONFIG1,COUNT1);
 
-  write8(SI1133_REG_COMMAND, SI1133_START);
+
+  // write8(SI1133_REG_COMMAND, SI1133_START);
+  write8(SI1133_REG_COMMAND, 0X11);
+
  //canal0 =uv
  //canal1 =full ir 
    return true;
@@ -91,13 +112,11 @@ uint8_t SI1133::readParam(uint8_t p) {
 
 /*********************************************************************/
 
-uint32_t SI1133::readUV(void) {
-	uint32_t temp;
-	read8(SI1133_REG_HOSTOUT0);
-	temp<<=8;
-	temp|=read8(SI1133_REG_HOSTOUT1);
- 	return temp; 
+bool SI1133::readUV(void) {
+ 	return true; 
 }
+
+
 uint32_t SI1133::readIR(void) {
 	uint32_t temp;
 	read8(SI1133_REG_HOSTOUT2);
