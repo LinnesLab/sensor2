@@ -24,7 +24,7 @@ Wire.begin();
 
   writeParam(SI1133_PARAM_ADCSENS0,0x09);
   //resolucion de los datos
-  writeParam(SI1133_PARAM_ADCPSOT0,BITS_16);
+  writeParam(SI1133_PARAM_ADCPSOT0,0x00);
   writeParam(SI1133_PARAM_MEASCONFIG0,COUNT0);
   //=======================================================
   // writeParam(SI1133_PARAM_ADCCONFIG1,0x62 );

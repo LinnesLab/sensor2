@@ -39,6 +39,10 @@ void loop() {
 //  Serial.print("FULL-IR: ");  Serial.println(IR,BIN);
   Serial.print("UV: ");  Serial.println(UV,BIN);
 Serial.print("UV: ");  Serial.println(UV);
+  if(UV>545){
+    Serial.println("UVI: 14");
+  }
+  else
   Serial.print("UVI: ");  Serial.println(0.0082*(0.00391*UV*UV+UV));
   uv.printOut();
   
